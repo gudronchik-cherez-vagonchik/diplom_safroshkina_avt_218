@@ -1,0 +1,3 @@
+-- DropTable
+DROP TABLE IF EXISTS "ApiKey";
+DROP TABLE IF EXISTS "Invoice";

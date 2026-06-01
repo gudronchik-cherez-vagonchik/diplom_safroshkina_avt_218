@@ -1,0 +1,199 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    overflow-x: hidden;
+  }
+
+  body {
+    overflow-x: hidden;
+  }
+
+  #root {
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  :root {
+    --background: 220 14% 98%;
+    --background-alt: 220 12% 96%;
+    --foreground: 224 18% 11%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 224 18% 11%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 224 18% 11%;
+
+    /* Современный холодный графит / slate (без бирюзы) */
+    --primary: 222 14% 30%;
+    --primary-foreground: 210 25% 98%;
+
+    --secondary: 220 13% 93%;
+    --secondary-foreground: 222 12% 22%;
+
+    --muted: 220 11% 92%;
+    --muted-foreground: 220 9% 42%;
+
+    --accent: 220 10% 90%;
+    --accent-foreground: 224 18% 11%;
+
+    --destructive: 0 72% 46%;
+    --destructive-foreground: 0 0% 100%;
+
+    --success: 152 30% 34%;
+    --success-foreground: 0 0% 100%;
+
+    --warning: 36 88% 46%;
+    --warning-foreground: 224 18% 11%;
+
+    --border: 220 11% 86%;
+    --input: 220 11% 86%;
+    --ring: 222 12% 38%;
+
+    --radius: 0.75rem;
+
+    --sidebar-background: 0 0% 100%;
+    --sidebar-foreground: 222 11% 30%;
+    --sidebar-primary: 222 14% 30%;
+    --sidebar-primary-foreground: 210 25% 98%;
+    --sidebar-accent: 220 12% 94%;
+    --sidebar-accent-foreground: 222 12% 18%;
+    --sidebar-border: 220 11% 90%;
+    --sidebar-ring: 222 12% 38%;
+
+    --gradient-primary: linear-gradient(145deg, hsl(222 14% 34%), hsl(220 12% 22%));
+    --shadow-card: 0 1px 3px 0 hsl(220 15% 45% / 0.07), 0 1px 2px -1px hsl(220 15% 45% / 0.05);
+    --shadow-card-hover: 0 12px 28px -8px hsl(222 18% 22% / 0.1), 0 6px 12px -6px hsl(222 18% 22% / 0.06);
+    --shadow-elevated: 0 22px 44px -14px hsl(222 22% 12% / 0.16);
+  }
+
+  .dark {
+    --background: 224 16% 7%;
+    --background-alt: 222 14% 9%;
+    --foreground: 210 18% 94%;
+
+    --card: 222 14% 10%;
+    --card-foreground: 210 18% 94%;
+
+    --popover: 222 14% 10%;
+    --popover-foreground: 210 18% 94%;
+
+    /* Светлый акцент на тёмном — «холодный» серый */
+    --primary: 218 11% 82%;
+    --primary-foreground: 224 18% 9%;
+
+    --secondary: 222 12% 16%;
+    --secondary-foreground: 210 14% 90%;
+
+    --muted: 222 10% 16%;
+    --muted-foreground: 218 8% 58%;
+
+    --accent: 222 10% 17%;
+    --accent-foreground: 210 18% 94%;
+
+    --destructive: 0 55% 42%;
+    --destructive-foreground: 0 0% 100%;
+
+    --success: 152 26% 40%;
+    --success-foreground: 224 18% 9%;
+
+    --warning: 38 78% 50%;
+    --warning-foreground: 224 18% 9%;
+
+    --border: 222 10% 19%;
+    --input: 222 10% 19%;
+    --ring: 218 12% 62%;
+
+    --sidebar-background: 224 16% 8%;
+    --sidebar-foreground: 218 10% 76%;
+    --sidebar-primary: 218 11% 82%;
+    --sidebar-primary-foreground: 224 18% 9%;
+    --sidebar-accent: 222 12% 14%;
+    --sidebar-accent-foreground: 210 18% 92%;
+    --sidebar-border: 222 10% 17%;
+    --sidebar-ring: 218 12% 62%;
+
+    --gradient-primary: linear-gradient(145deg, hsl(222 10% 28%), hsl(224 12% 18%));
+    --shadow-card: 0 1px 3px 0 hsl(0 0% 0% / 0.32), 0 1px 2px -1px hsl(0 0% 0% / 0.26);
+    --shadow-card-hover: 0 14px 36px -10px hsl(0 0% 0% / 0.42), 0 8px 16px -8px hsl(0 0% 0% / 0.28);
+    --shadow-elevated: 0 24px 48px -12px hsl(0 0% 0% / 0.52);
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+}
+
+@layer utilities {
+  .gradient-primary {
+    background: var(--gradient-primary);
+  }
+
+  .gradient-primary-text {
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .shadow-card {
+    box-shadow: var(--shadow-card);
+  }
+
+  .shadow-card-hover {
+    box-shadow: var(--shadow-card-hover);
+  }
+
+  .shadow-elevated {
+    box-shadow: var(--shadow-elevated);
+  }
+
+  .glass {
+    backdrop-filter: blur(12px);
+    background: hsl(0 0% 100% / 0.82);
+  }
+
+  .dark .glass {
+    background: hsl(222 14% 10% / 0.88);
+  }
+
+  /* Снимок ER: без ручек редактора, поля как текст */
+  .er-diagram-exporting [data-er-chrome],
+  .er-diagram-exporting [data-er-row-handle],
+  .er-diagram-exporting [data-er-add-column],
+  .er-diagram-exporting .er-relation-hit {
+    visibility: hidden !important;
+    pointer-events: none !important;
+  }
+
+  .er-diagram-exporting input[data-er-field],
+  .er-diagram-exporting select[data-er-field] {
+    border-color: transparent !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    outline: none !important;
+    appearance: none;
+    -webkit-appearance: none;
+  }
+
+  .er-diagram-exporting select[data-er-field] {
+    background-image: none !important;
+  }
+
+  .er-diagram-exporting [data-er-table-header],
+  .er-diagram-exporting [data-er-table-title] {
+    overflow: visible !important;
+  }
+}

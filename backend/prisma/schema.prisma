@@ -1,0 +1,171 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  OWNER
+  ADMIN
+  EDITOR
+  VIEWER
+}
+
+enum DatabaseStatus {
+  RUNNING
+  STOPPED
+  MIGRATING
+  ERROR
+  PROVISIONING
+}
+
+enum BackupType {
+  AUTO
+  MANUAL
+}
+
+enum BackupStatus {
+  COMPLETED
+  IN_PROGRESS
+  FAILED
+}
+
+enum MigrationStatus {
+  PENDING
+  RUNNING
+  COMPLETED
+  FAILED
+}
+
+model User {
+  id           String          @id @default(cuid())
+  name         String
+  /** Уникальный логин для поиска и приглашений (латиница, цифры, _) */
+  username     String?         @unique
+  email        String          @unique
+  passwordHash String
+  role         UserRole        @default(OWNER)
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt
+  projects     ProjectMember[]
+  auditLogs    AuditLog[]
+  invitesCreated ProjectInvite[] @relation("InviteCreator")
+  notifications Notification[]
+}
+
+model Project {
+  id          String          @id @default(cuid())
+  name        String
+  description String          @default("")
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+  databases   ManagedDatabase[]
+  members     ProjectMember[]
+  invites     ProjectInvite[]
+}
+
+model ProjectInvite {
+  id              String   @id @default(cuid())
+  token           String   @unique
+  projectId       String
+  /** Если приглашение по username — кому адресовано (ссылки без получателя: null) */
+  targetUserId    String?
+  role            UserRole @default(EDITOR)
+  createdByUserId String
+  expiresAt       DateTime
+  createdAt       DateTime @default(now())
+  project         Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  createdBy       User     @relation("InviteCreator", fields: [createdByUserId], references: [id], onDelete: Cascade)
+
+  @@index([token])
+  @@index([projectId, targetUserId])
+}
+
+model Notification {
+  id          String    @id @default(cuid())
+  userId      String
+  type        String
+  title       String
+  body        String?
+  payloadJson String    @default("{}")
+  readAt      DateTime?
+  createdAt   DateTime  @default(now())
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
+  @@index([userId, readAt])
+}
+
+model ProjectMember {
+  id        String   @id @default(cuid())
+  projectId String
+  userId    String
+  role      UserRole @default(OWNER)
+  joinedAt  DateTime @default(now())
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([projectId, userId])
+}
+
+model ManagedDatabase {
+  id                     String         @id @default(cuid())
+  name                   String
+  engine                 String
+  version                String
+  region                 String
+  status                 DatabaseStatus @default(RUNNING)
+  storage                String         @default("0 B")
+  connections            Int            @default(0)
+  tagsJson               String         @default("[]")
+  projectId              String
+  createdAt              DateTime       @default(now())
+  connectionStringMasked String
+  host                   String
+  port                   Int
+  databaseName           String
+  username               String
+  passwordEncrypted      String
+  ssl                    Boolean        @default(false)
+  constructorStateJson   String?
+  project                Project        @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  backups                Backup[]
+  migrations             Migration[]
+}
+
+model Backup {
+  id          String       @id @default(cuid())
+  databaseId  String
+  size        String
+  type        BackupType   @default(MANUAL)
+  status      BackupStatus @default(COMPLETED)
+  createdAt   DateTime     @default(now())
+  payloadJson String
+  database    ManagedDatabase @relation(fields: [databaseId], references: [id], onDelete: Cascade)
+}
+
+model Migration {
+  id          String          @id @default(cuid())
+  databaseId  String
+  name        String
+  sql         String
+  status      MigrationStatus @default(PENDING)
+  logsJson    String          @default("[]")
+  createdAt   DateTime        @default(now())
+  database    ManagedDatabase @relation(fields: [databaseId], references: [id], onDelete: Cascade)
+}
+
+model AuditLog {
+  id         String   @id @default(cuid())
+  action     String
+  resource   String
+  details    String?
+  createdAt  DateTime @default(now())
+  userId     String?
+  userName   String
+  user       User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+}
+
